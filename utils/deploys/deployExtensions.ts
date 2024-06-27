@@ -13,6 +13,7 @@ import {
   AirdropExtension,
   AuctionRebalanceExtension,
   DEXAdapter,
+  DEXAdapterV2,
   ExchangeIssuance,
   ExchangeIssuanceV2,
   ExchangeIssuanceLeveraged,
@@ -22,6 +23,7 @@ import {
   FlashMintPerp,
   FlexibleLeverageStrategyExtension,
   FeeSplitExtension,
+  PrtFeeSplitExtension,
   GIMExtension,
   GovernanceExtension,
   MigrationExtension,
@@ -40,9 +42,12 @@ import {
 import { AirdropExtension__factory } from "../../typechain/factories/AirdropExtension__factory";
 import { AuctionRebalanceExtension__factory } from "../../typechain/factories/AuctionRebalanceExtension__factory";
 import { DEXAdapter__factory } from "../../typechain/factories/DEXAdapter__factory";
+import { DEXAdapterV2__factory } from "../../typechain/factories/DEXAdapterV2__factory";
 import { ExchangeIssuance__factory } from "../../typechain/factories/ExchangeIssuance__factory";
 import { ExchangeIssuanceV2__factory } from "../../typechain/factories/ExchangeIssuanceV2__factory";
 import { ExchangeIssuanceLeveraged__factory } from "../../typechain/factories/ExchangeIssuanceLeveraged__factory";
+import { FlashMintHyETH__factory } from "../../typechain/factories/FlashMintHyETH__factory";
+import { FlashMintHyETHV2__factory } from "../../typechain/factories/FlashMintHyETHV2__factory";
 import { FlashMintLeveraged__factory } from "../../typechain/factories/FlashMintLeveraged__factory";
 import { FlashMintNotional__factory } from "../../typechain/factories/FlashMintNotional__factory";
 import { FlashMintLeveragedForCompound__factory } from "../../typechain/factories/FlashMintLeveragedForCompound__factory";
@@ -51,6 +56,7 @@ import { FlashMintWrapped__factory } from "../../typechain/factories/FlashMintWr
 import { ExchangeIssuanceZeroEx__factory } from "../../typechain/factories/ExchangeIssuanceZeroEx__factory";
 import { FlashMintPerp__factory } from "../../typechain/factories/FlashMintPerp__factory";
 import { FeeSplitExtension__factory } from "../../typechain/factories/FeeSplitExtension__factory";
+import { PrtFeeSplitExtension__factory } from "../../typechain/factories/PrtFeeSplitExtension__factory";
 import { FlexibleLeverageStrategyExtension__factory } from "../../typechain/factories/FlexibleLeverageStrategyExtension__factory";
 import { GIMExtension__factory } from "../../typechain/factories/GIMExtension__factory";
 import { GovernanceExtension__factory } from "../../typechain/factories/GovernanceExtension__factory";
@@ -81,6 +87,24 @@ export default class DeployExtensions {
       debtIssuanceModule,
       operatorFeeSplit,
       operatorFeeRecipient,
+    );
+  }
+
+  public async deployPrtFeeSplitExtension(
+    manager: Address,
+    streamingFeeModule: Address,
+    debtIssuanceModule: Address,
+    operatorFeeSplit: BigNumber,
+    operatorFeeRecipient: Address,
+    prt: Address,
+  ): Promise<PrtFeeSplitExtension> {
+    return await new PrtFeeSplitExtension__factory(this._deployerSigner).deploy(
+      manager,
+      streamingFeeModule,
+      debtIssuanceModule,
+      operatorFeeSplit,
+      operatorFeeRecipient,
+      prt,
     );
   }
 
@@ -180,6 +204,10 @@ export default class DeployExtensions {
 
   public async deployDEXAdapter(): Promise<DEXAdapter> {
     return await new DEXAdapter__factory(this._deployerSigner).deploy();
+  }
+
+  public async deployDEXAdapterV2(): Promise<DEXAdapterV2> {
+    return await new DEXAdapterV2__factory(this._deployerSigner).deploy();
   }
 
   public async deployExchangeIssuanceLeveraged(
@@ -311,6 +339,93 @@ export default class DeployExtensions {
       BalancerV2VaultAddress,
     );
   }
+
+  public async deployFlashMintHyETHV2(
+    wethAddress: Address,
+    quickRouterAddress: Address,
+    sushiRouterAddress: Address,
+    uniV3RouterAddress: Address,
+    uniswapV3QuoterAddress: Address,
+    curveCalculatorAddress: Address,
+    curveAddressProviderAddress: Address,
+    setControllerAddress: Address,
+    debtIssuanceModuleAddress: Address,
+    stETHAddress: Address,
+    curveStEthEthPoolAddress: Address,
+  ) {
+    const dexAdapter = await this.deployDEXAdapterV2();
+
+    const linkId = convertLibraryNameToLinkId(
+      "contracts/exchangeIssuance/DEXAdapterV2.sol:DEXAdapterV2",
+    );
+
+    return await new FlashMintHyETHV2__factory(
+      // @ts-ignore
+      {
+        [linkId]: dexAdapter.address,
+      },
+      // @ts-ignore
+      this._deployerSigner,
+    ).deploy(
+      {
+        quickRouter: quickRouterAddress,
+        sushiRouter: sushiRouterAddress,
+        uniV3Router: uniV3RouterAddress,
+        uniV3Quoter: uniswapV3QuoterAddress,
+        curveAddressProvider: curveAddressProviderAddress,
+        curveCalculator: curveCalculatorAddress,
+        weth: wethAddress,
+      },
+      setControllerAddress,
+      debtIssuanceModuleAddress,
+      stETHAddress,
+      curveStEthEthPoolAddress
+    );
+  }
+
+  public async deployFlashMintHyETH(
+    wethAddress: Address,
+    quickRouterAddress: Address,
+    sushiRouterAddress: Address,
+    uniV3RouterAddress: Address,
+    uniswapV3QuoterAddress: Address,
+    curveCalculatorAddress: Address,
+    curveAddressProviderAddress: Address,
+    setControllerAddress: Address,
+    debtIssuanceModuleAddress: Address,
+    stETHAddress: Address,
+    curveStEthEthPoolAddress: Address,
+  ) {
+    const dexAdapter = await this.deployDEXAdapterV2();
+
+    const linkId = convertLibraryNameToLinkId(
+      "contracts/exchangeIssuance/DEXAdapterV2.sol:DEXAdapterV2",
+    );
+
+    return await new FlashMintHyETH__factory(
+      // @ts-ignore
+      {
+        [linkId]: dexAdapter.address,
+      },
+      // @ts-ignore
+      this._deployerSigner,
+    ).deploy(
+      {
+        quickRouter: quickRouterAddress,
+        sushiRouter: sushiRouterAddress,
+        uniV3Router: uniV3RouterAddress,
+        uniV3Quoter: uniswapV3QuoterAddress,
+        curveAddressProvider: curveAddressProviderAddress,
+        curveCalculator: curveCalculatorAddress,
+        weth: wethAddress,
+      },
+      setControllerAddress,
+      debtIssuanceModuleAddress,
+      stETHAddress,
+      curveStEthEthPoolAddress
+    );
+  }
+
 
   public async deployExchangeIssuanceLeveragedForCompound(
     wethAddress: Address,

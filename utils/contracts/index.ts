@@ -12,6 +12,7 @@ export { DebtIssuanceModule } from "../../typechain/DebtIssuanceModule";
 export { DebtIssuanceModuleV2 } from "../../typechain/DebtIssuanceModuleV2";
 export { BasicIssuanceModule } from "../../typechain/BasicIssuanceModule";
 export { DEXAdapter } from "../../typechain/DEXAdapter";
+export { DEXAdapterV2 } from "../../typechain/DEXAdapterV2";
 export { ExchangeIssuance } from "../../typechain/ExchangeIssuance";
 export { ExchangeIssuanceV2 } from "../../typechain/ExchangeIssuanceV2";
 export { ExchangeIssuanceLeveraged } from "../../typechain/ExchangeIssuanceLeveraged";
@@ -68,3 +69,6 @@ export { GlobalAuctionRebalanceExtension } from "../../typechain/GlobalAuctionRe
 export { GlobalOptimisticAuctionRebalanceExtension } from "../../typechain/GlobalOptimisticAuctionRebalanceExtension";
 export { OptimisticAuctionRebalanceExtensionV1 } from "../../typechain/OptimisticAuctionRebalanceExtensionV1";
 export { OptimisticOracleV3Mock } from "../../typechain/OptimisticOracleV3Mock";
+export { PrtStakingPoolMock } from "../../typechain/PrtStakingPoolMock";
+export { PrtFeeSplitExtension } from "../../typechain/PrtFeeSplitExtension";
+export { Prt } from "../../typechain/Prt";
