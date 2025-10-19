@@ -114,8 +114,8 @@
     "ethers": "5.0.24",
     "fs-extra": "^5.0.0",
     "module-alias": "^2.2.2",
-    "replace-in-file": "^6.1.0",
-    "typechain": "^4.0.1"
+    "replace-in-file": "^8.0.0",
+    "typechain": "^5.0.0"
   },
   "peerDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",
